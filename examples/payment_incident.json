@@ -1,0 +1,25 @@
+{
+  "incident_id": "INC-2048",
+  "title": "Checkout payment failures after gateway deployment",
+  "service": "payment-api",
+  "severity": 9,
+  "urgency": 9,
+  "error_rate": 42,
+  "duration_minutes": 28,
+  "affected_services": 5,
+  "affected_users": 18500,
+  "customer_impact": 88,
+  "dependency_failures": 2,
+  "recurrence_count": 2,
+  "days_since_last_occurrence": 12,
+  "remediation_verified": false,
+  "symptoms": ["HTTP 502", "checkout timeout", "gateway errors"],
+  "evidence": [
+    {"source":"metrics","signal":"error rate increased to 42%","strength":1.0,"observed_at":"2026-09-15T10:01:00Z"},
+    {"source":"logs","signal":"gateway connection failures","strength":0.95,"observed_at":"2026-09-15T10:03:00Z"},
+    {"source":"deployments","signal":"payment-api v4.8.1 deployed","strength":0.9,"observed_at":"2026-09-15T09:58:00Z"}
+  ],
+  "changes": [
+    {"change_id":"DEP-481","service":"payment-api","change_type":"deployment","minutes_before_incident":3,"risk_level":"high"}
+  ]
+}
