@@ -79,4 +79,4 @@ Then `GET /health` or `POST /analyze` with the example incident JSON.
 
 ## Engineering focus
 
-The project demonstrates ports/adapters-style separation, dependency injection, immutable result models, deterministic scoring, persistence abstraction, HTTP integration testing, and CI. The system is intentionally decision support: a human engineer remains responsible for diagnosis and remediation.
+The project demonstrates ports/adapters-style separation, dependency injection, immutable result models, deterministic scoring, persistence abstraction, HTTP integration testing, and CI. The system is intentionally decision support: a human engineer remains responsible for diagnosis and remedia.
