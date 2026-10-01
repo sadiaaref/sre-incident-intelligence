@@ -2,6 +2,17 @@
 
 An explainable incident triage and investigation-assistance engine. It does **not** automatically fix production systems. Its job is to turn structured incident signals into a ranked, auditable investigation view for engineers.
 
+## Highlight
+
+- 📊 Risk, customer-impact, and blast-radius scoring
+- 🧩 Ranked investigation hypotheses
+- 🚀 Recent deployment/change correlation
+- 📚 Historical incident similarity
+- ⚠️ Recurrence-risk analysis
+- 🧪 Automated testing
+- ⚙️ GitHub Actions CI
+- 🐳 Docker support
+
 ## What is implemented
 
 - Multi-factor risk, customer-impact and blast-radius scoring
