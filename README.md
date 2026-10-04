@@ -1,252 +1,178 @@
+# SRE Incident Intelligence
 
-# SRE Incident Intelligence Engine
+<p align="center">
+  <strong>Making production incident investigation more structured, explainable, and actionable.</strong>
+</p>
 
-**An explainable incident triage and investigation-assistance engine built with Python and SQLite.**
+<p align="center">
+  A Python-based reliability engineering project that analyzes incident signals, service dependencies, and deployment changes to help engineers understand failures and investigate their potential causes.
+</p>
 
-SRE Incident Intelligence transforms structured incident signals into a ranked, auditable investigation view for engineers.
-
-It helps identify potential causes, assess operational risk, evaluate customer impact, and prioritize investigations without automatically modifying production systems.
-
-The project explores how software reliability engineering can benefit from deterministic analysis, historical incident comparison, explainable scoring, and structured investigation workflows.
-
----
-
-## Why I Built This
-
-When a production incident occurs, engineers must investigate multiple signals to understand what happened and determine where to focus their attention.
-
-The challenge is not simply detecting an issue. It is making investigation more structured, explainable, and efficient.
-
-SRE Incident Intelligence focuses on questions such as:
-
-- How severe is an incident?
-- Which services or dependencies may be affected?
-- Could a recent deployment be related to the incident?
-- Which investigation hypotheses deserve attention first?
-- Have similar incidents occurred in the past?
-- Is the incident likely to recur?
-- What evidence is missing from the investigation?
-- How can engineers make informed decisions without relying on black-box recommendations?
-
-The engine processes structured incident data and produces an explainable investigation report that keeps human engineers in control of diagnosis and remediation.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Testing-Pytest-green?logo=pytest&logoColor=white" alt="Pytest">
+  <img src="https://img.shields.io/badge/Database-SQLite-blue?logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/Container-Docker-2496ED?logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions">
+</p>
 
 ---
 
-## Architecture
+## Overview
+
+When a production system fails, identifying the cause is rarely as simple as looking at a single error message. Engineers may need to investigate unusual signals, recent deployments, service dependencies, and historical incidents before they can understand what went wrong.
+
+**SRE Incident Intelligence explores how software can make that investigation more organized.**
+
+The application processes incident information and produces structured analysis, including risk and impact assessments, potential blast radius, root-cause hypotheses, and recommendations for further investigation.
+
+I built this project to strengthen my understanding of backend engineering and reliability concepts while exploring a practical problem that software engineering teams encounter.
+
+> **Project philosophy:** Help engineers make better-informed investigation decisions by turning scattered incident information into structured, explainable results.
+
+## Project Demo
+
+The screenshots below show the application in action, from incident analysis to test execution and API output.
+
+### 1. Incident Analysis
+
+![Incident Analysis](screenshots/incident-analysis.png)
+
+*An example of the incident analysis output, including priority, impact, and investigation findings.*
+
+### 2. Test Results
+
+![Test Results](screenshots/test-results.png)
+
+*Automated tests used to verify important application behavior.*
+
+### 3. Structured JSON Output
+
+![JSON Output](screenshots/json-output.png)
+
+*Machine-readable analysis results that can be consumed by other applications.*
+
+### 4. REST API Response
+
+![API Response](screenshots/api-response.png)
+
+*An example of interacting with the analysis engine through the API.*
+
+---
+
+## Key Capabilities
+
+| Capability | What it does |
+|---|---|
+| Incident analysis | Processes incident information through a structured workflow |
+| Risk assessment | Calculates incident priority and risk indicators |
+| Impact assessment | Evaluates the potential severity of an incident |
+| Dependency analysis | Examines relationships between services |
+| Blast-radius estimation | Identifies services that may be affected by an incident |
+| Root-cause hypotheses | Produces possible explanations based on available evidence |
+| Confidence estimates | Communicates uncertainty in the generated hypotheses |
+| Historical comparison | Uses available incident history as investigation context |
+| Recommendations | Suggests follow-up investigation and recovery actions |
+| CLI | Supports command-line analysis |
+| REST API | Exposes analysis functionality programmatically |
+| SQLite persistence | Stores application data |
+| Automated testing | Checks core behavior and API functionality |
+| Docker and CI | Supports consistent environments and automated checks |
+
+## How It Works
+
+The application follows a structured workflow:
+
+1. **Receive incident data** — Read incident details, service information, and available signals.
+2. **Validate input** — Check the incoming data before analysis.
+3. **Analyze signals** — Examine evidence for unusual patterns.
+4. **Evaluate dependencies** — Consider relationships between services to estimate potential impact.
+5. **Review changes and history** — Use deployment information and available historical context.
+6. **Assess risk and impact** — Generate structured indicators to help prioritize investigation.
+7. **Generate hypotheses** — Present possible root causes with confidence estimates.
+8. **Provide recommendations** — Suggest practical next steps for engineers.
+
+### System Architecture
 
 ```mermaid
 flowchart TD
-    A["Incident Input"] --> B["CLI / HTTP API"]
-    B --> C["Incident Analyzer"]
+    A[Incident Input] --> B[Input Validation]
+    B --> C[Incident Analysis Engine]
 
-    C --> D["Risk Scoring"]
-    C --> E["Customer Impact Analysis"]
-    C --> F["Blast-Radius Assessment"]
-    C --> G["Change Correlation"]
-    C --> H["Historical Similarity"]
-    C --> I["Recurrence Analysis"]
-    C --> J["Anomaly Detection"]
-    C --> K["Evidence-Gap Detection"]
+    C --> D[Signal Analysis]
+    C --> E[Dependency Analysis]
+    C --> F[Change Analysis]
+    C --> G[Historical Context]
 
-    L[("In-Memory History")] --> C
-    M[("SQLite History")] --> C
+    D --> H[Risk and Impact Assessment]
+    E --> H
+    F --> H
+    G --> H
 
-    D --> N["Analysis Result"]
-    E --> N
-    F --> N
-    G --> N
-    H --> N
-    I --> N
-    J --> N
-    K --> N
+    H --> I[Root-Cause Hypotheses]
+    I --> J[Investigation Recommendations]
 
-    N --> O["Ranked Investigation Report"]
-    O --> P["Human Engineer"]
+    J --> K[CLI]
+    J --> L[REST API]
+
+    K --> M[Structured Output]
+    L --> M
+    M --> N[SQLite Persistence]
 ```
 
-The core engine is deterministic and intentionally explainable.
-
-It consumes already-structured incident signals rather than pretending to ingest raw logs, traces, or a production observability platform.
+The architecture separates analysis responsibilities from the interfaces used to access them. This makes the system easier to test, understand, and extend.
 
 ---
 
-## Main Investigation Flow
+## Engineering Decisions
 
-```mermaid
-flowchart TD
-    A["Incident Submitted"] --> B["Validate Incident Data"]
-    B --> C["Load Historical Context"]
-    C --> D["Analyze Incident Signals"]
+Beyond implementing features, I focused on a few engineering principles while building this project.
 
-    D --> E["Calculate Risk and Impact"]
-    D --> F["Evaluate Dependencies"]
-    D --> G["Correlate Recent Changes"]
-    D --> H["Detect Anomalies"]
-    D --> I["Compare Historical Incidents"]
+### Modular design
 
-    E --> J["Rank Investigation Hypotheses"]
-    F --> J
-    G --> J
-    H --> J
-    I --> J
+Organizing functionality into separate packages helps keep responsibilities clear and makes individual components easier to test and maintain.
 
-    J --> K["Assess Recurrence Risk"]
-    K --> L["Identify Evidence Gaps"]
-    L --> M["Generate Explainable Report"]
-    M --> N["Engineer Reviews Findings"]
-```
+### Structured outputs
 
-### Main Flow Explained
+JSON output makes analysis results easier to inspect and provides a foundation for integration with other tools.
 
-1. An incident is submitted through the CLI or HTTP API.
-2. The input is validated before analysis.
-3. Historical incident context is retrieved when available.
-4. The engine evaluates risk, customer impact, dependencies, and operational signals.
-5. Recent changes and historical incidents are examined for potential correlations.
-6. Investigation hypotheses are ranked using deterministic rules.
-7. Recurrence risk and evidence gaps are assessed.
-8. An explainable report is generated for an engineer to review.
+### API accessibility
+
+The REST API allows other applications to interact with the analysis engine without depending on the command-line interface.
+
+### Testability
+
+Automated tests help verify expected behavior and reduce the risk of unintended changes during development.
+
+### Reliability-oriented thinking
+
+Concepts such as service dependencies, blast radius, incident history, and root-cause hypotheses encourage a broader view of system failures rather than focusing only on isolated errors.
 
 ---
 
-## Core Features
+## Technology Stack
 
-### 1. Multi-Factor Risk Scoring
-
-Evaluates incidents using multiple operational signals rather than relying on a single severity indicator.
-
-The analysis considers risk, customer impact, and potential blast radius to provide a more structured view of incident severity.
-
-### 2. Customer-Impact Assessment
-
-Helps evaluate the potential effect of an incident on customers.
-
-The resulting assessment provides additional context for prioritizing investigation efforts.
-
-### 3. Blast-Radius Analysis
-
-Evaluates potential impact across affected services and dependencies.
-
-This helps engineers understand the possible scope of an incident before deciding where to investigate.
-
-### 4. Explainable Hypothesis Ranking
-
-Generates ranked investigation hypotheses across several signal categories:
-
-- Dependency failures
-- Recent deployments and changes
-- Traffic and capacity anomalies
-
-Each hypothesis is intended to provide an understandable reason for further investigation rather than presenting an unexplained conclusion.
-
-### 5. Deployment and Change Correlation
-
-Examines recent deployment or configuration changes that may be related to an incident.
-
-The system explicitly distinguishes correlation from causation. A recent change may be relevant evidence, but it is not automatically considered the root cause.
-
-### 6. Historical Incident Similarity
-
-Compares current incidents with historical records using normalized token fingerprints.
-
-This helps identify potentially related incidents and provides additional investigative context.
-
-### 7. Recurrence-Risk Analysis
-
-Evaluates historical patterns and incident characteristics to help identify possible recurrence concerns.
-
-The resulting assessment supports preventive investigation rather than guaranteeing future outcomes.
-
-### 8. Evidence-Gap Detection
-
-Identifies missing information that may limit the quality of an investigation.
-
-The engine provides recommendations for gathering additional evidence and improving the investigation process.
-
-### 9. Lightweight Anomaly Detection
-
-Analyzes time-series metric samples to identify unusual behavior.
-
-This provides an additional signal for investigation when operational measurements deviate from expected patterns.
-
-### 10. Persistent Incident History
-
-Supports both in-memory and durable SQLite history adapters.
-
-Persistent storage allows historical incident context to remain available across application restarts.
-
-### 11. HTTP API
-
-Provides a lightweight HTTP interface with:
-
-- `GET /health` — API health check
-- `POST /analyze` — Incident analysis
-
-The API includes payload validation and request-size limits.
-
-### 12. CLI Interface
-
-Supports human-readable and JSON output for incident analysis.
-
-This makes the engine useful for both interactive investigation and programmatic integration.
+| Category | Technologies |
+|---|---|
+| Programming language | Python |
+| API | REST |
+| Database | SQLite |
+| Testing | Pytest |
+| Containerization | Docker |
+| Continuous integration | GitHub Actions |
+| Version control | Git and GitHub |
 
 ---
 
-## Investigation Lifecycle
+## Getting Started
 
-```mermaid
-stateDiagram-v2
-    [*] --> Submitted
-    Submitted --> Validating
-    Validating --> Analyzing: Valid Input
-    Validating --> Rejected: Invalid Input
+You can run the project locally using Python.
 
-    Analyzing --> Scoring
-    Scoring --> Correlation
-    Correlation --> HistoricalAnalysis
-    HistoricalAnalysis --> ReportGeneration
+### Prerequisites
 
-    ReportGeneration --> EngineerReview
-    EngineerReview --> InvestigationContinues
-    EngineerReview --> InvestigationComplete
-
-    Rejected --> [*]
-    InvestigationComplete --> [*]
-```
-
-The lifecycle separates automated analysis from human investigation.
-
-The engine provides evidence and ranked hypotheses, while engineers remain responsible for determining root cause and selecting remediation actions.
-
----
-
-## Project Structure
-
-```text
-sre-incident-intelligence/
-│
-├── src/
-│   └── incident_intelligence/
-│
-├── examples/
-│   └── payment_incident.json
-│
-├── tests/
-│
-├── .github/
-│   └── workflows/
-│
-├── Dockerfile
-├── requirements.txt
-├── README.md
-└── ...
-```
-
-The implementation is organized around incident analysis, scoring, historical context, persistence, external interfaces, and testing.
-
----
-
-## Quick Start
+- Python 3.10 or later
+- Git
+- pip
 
 ### 1. Clone the repository
 
@@ -255,146 +181,205 @@ git clone https://github.com/sadiaaref/sre-incident-intelligence.git
 cd sre-incident-intelligence
 ```
 
-### 2. Run the test suite
+### 2. Create a virtual environment
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install the project
+
+```bash
+python -m pip install -e .
+```
+
+### 4. Run an example incident
+
+```bash
+python -m incident_intelligence examples/payment_incident.json
+```
+
+### 5. Run the test suite
 
 ```bash
 python -m pytest -v
 ```
 
-### 3. Analyze an example incident
+---
+
+## Using the Command-Line Interface
+
+The CLI provides a direct way to analyze an incident.
+
+### Standard output
 
 ```bash
-python -m src.incident_intelligence examples/payment_incident.json
+python -m incident_intelligence examples/payment_incident.json
 ```
 
-### 4. Generate JSON output
+### JSON output
 
 ```bash
-python -m src.incident_intelligence examples/payment_incident.json --json
+python -m incident_intelligence examples/payment_incident.json --json
 ```
 
-### 5. Run the API
+The JSON mode is useful when analysis results need to be inspected programmatically or passed to another tool.
+
+---
+
+## REST API
+
+The application also exposes its analysis functionality through a local REST API.
+
+### Start the server
 
 ```bash
 python -m incident_intelligence.api
 ```
 
-The API provides the following endpoints:
+The server runs at:
+
+```text
+http://127.0.0.1:8080
+```
+
+### Available endpoints
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/health` | Check API availability |
-| POST | `/analyze` | Analyze a submitted incident |
+| GET | `/health` | Check whether the API is running |
+| POST | `/analyze` | Submit incident data for analysis |
 
-Refer to the example incident JSON for the expected request structure.
+### Example request using PowerShell
+
+```powershell
+$body = Get-Content -Raw "examples/payment_incident.json"
+
+$response = Invoke-RestMethod `
+  -Uri "http://127.0.0.1:8080/analyze" `
+  -Method Post `
+  -ContentType "application/json" `
+  -Body $body
+
+$response
+```
+
+This makes it possible to interact with the analysis engine through an HTTP request rather than running the CLI directly.
 
 ---
 
-## Testing
+## Testing and Quality Checks
 
-The project includes automated tests covering core analysis and API behavior.
+Testing is an important part of the project because incident analysis should produce predictable behavior for known inputs.
 
-Testing areas include:
-
-- Incident input validation
-- Risk and impact scoring
-- Hypothesis ranking
-- Historical similarity
-- Recurrence-risk analysis
-- Evidence-gap detection
-- Anomaly detection
-- SQLite persistence
-- HTTP integration behavior
-- Error handling
-
-Run the test suite using:
+Run the complete test suite:
 
 ```bash
 python -m pytest -v
 ```
 
----
+The test suite includes coverage for areas such as:
 
-## Tech Stack
-
-| Technology | Purpose |
-|---|---|
-| Python | Core analysis and application logic |
-| SQLite | Persistent incident history |
-| HTTP API | Incident submission and analysis |
-| Pytest | Unit and integration testing |
-| Docker | Containerized execution |
-| GitHub Actions | Continuous integration |
-| JSON | Structured incident input and output |
+- Core analysis behavior
+- API functionality
+- Application components
+- Repository operations
+- Telemetry-related functionality
+- Additional analysis scenarios
 
 ---
 
-## Engineering Concepts Demonstrated
+## Project Structure
 
-Building SRE Incident Intelligence provided practical experience with:
+```text
+sre-incident-intelligence/
+│
+├── .github/
+│   └── workflows/
+│
+├── docs/
+│
+├── examples/
+│   └── payment_incident.json
+│
+├── screenshots/
+│   ├── incident-analysis.png
+│   ├── test-results.png
+│   ├── json-output.png
+│   └── api-response.png
+│
+├── src/
+│   ├── incident_intelligence/
+│   │   ├── adapters/
+│   │   ├── api/
+│   │   ├── config/
+│   │   ├── domain/
+│   │   ├── engine/
+│   │   ├── reporting/
+│   │   ├── storage/
+│   │   ├── __init__.py
+│   │   ├── __main__.py
+│   │   └── cli.py
+│   │
+│   └── sre_incident_intelligence.egg-info/
+│
+├── tests/
+│   ├── test_advanced.py
+│   ├── test_api.py
+│   ├── test_components.py
+│   ├── test_engine.py
+│   ├── test_repository.py
+│   └── test_telemetry.py
+│
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── LICENSE
+├── pyproject.toml
+└── README.md
+```
 
-- Backend architecture
-- Ports-and-adapters design
-- Dependency injection
-- Immutable result models
-- Deterministic scoring
-- Explainable decision support
-- Persistence abstraction
-- Historical data analysis
-- HTTP API design
-- Input validation
-- Automated testing
-- Continuous integration
-- Human-in-the-loop system design
+*The `.venv/` and `.pytest_cache/` directories are local development artifacts and are intentionally excluded from this overview. The `.egg-info/` directory contains generated package metadata.*
 
 ---
 
-## Design Principles
+## Current Limitations
 
-### Explainability Over Black-Box Decisions
+This project is an engineering prototype intended to support investigation and learning. Its risk assessments and root-cause hypotheses are not a replacement for production observability systems or engineering judgment.
 
-Every investigation result should be understandable and traceable to the signals used during analysis.
-
-### Human-in-the-Loop Investigation
-
-The engine assists engineers rather than replacing their judgment.
-
-### Correlation Is Not Causation
-
-A relationship between a deployment and an incident is treated as investigative evidence, not automatic proof of root cause.
-
-### Reproducible Analysis
-
-Deterministic analysis helps produce consistent results for the same inputs and historical context.
-
-### Clear Separation of Responsibilities
-
-The core analysis engine remains separate from CLI, HTTP, and persistence adapters.
-
----
-
-## Limitations
-
-- The engine consumes structured incident signals rather than raw production telemetry.
-- It does not automatically remediate incidents.
-- Investigation hypotheses are decision-support suggestions, not guaranteed root causes.
-- Historical similarity depends on the quality and availability of stored incident data.
-- Recurrence-risk assessments are indicators, not guarantees of future behavior.
-
----
+The quality of its analysis depends on the completeness and accuracy of the supplied incident information.
 
 ## Future Improvements
 
-Potential areas for further development include:
+There are several directions in which I would like to take this project:
 
-- Integration with real observability platforms
-- Live metrics and tracing ingestion
-- Advanced incident correlation
-- Enhanced investigation dashboards
-- Additional persistence backends
-- More detailed operational monitoring
-- Improved incident visualization
-- Expanded historical analysis capabilities
+- Integrate with real monitoring and observability platforms.
+- Explore more advanced anomaly-detection techniques.
+- Improve historical incident comparison.
+- Add richer service dependency visualizations.
+- Expand API and integration test coverage.
+- Evaluate performance with larger incident datasets.
+- Explore ways to make generated hypotheses more transparent and easier to validate.
+
+---
+
+## What I Learned
+
+Building SRE Incident Intelligence helped me connect concepts that are often studied separately: backend development, data persistence, testing, API design, and reliability engineering.
+
+More importantly, it encouraged me to think beyond whether a program works and consider how it can be maintained, tested, understood, and extended by other engineers.
+
+This project represents my continued effort to build practical software, learn through implementation, and develop an engineering mindset.
 
 ---
 
@@ -402,6 +387,5 @@ Potential areas for further development include:
 
 **Sadia Aref**
 
-Python Developer | Backend & Software Engineering
-
-[GitHub Profile](https://github.com/sadiaaref)
+- GitHub: [@sadiaaref](https://github.com/sadiaaref)
+- Project repository: [SRE Incident Intelligence](https://github.com/sadiaaref/sre-incident-intelligence)
