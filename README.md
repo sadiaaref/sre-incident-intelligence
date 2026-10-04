@@ -389,4 +389,3 @@ This project represents my continued effort to build practical software, learn t
 
 - GitHub: [@sadiaaref](https://github.com/sadiaaref)
 - Project repository: [SRE Incident Intelligence](https://github.com/sadiaaref/sre-incident-intelligence)
-
