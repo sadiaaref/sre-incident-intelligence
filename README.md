@@ -20,7 +20,22 @@
 
 ## Overview
 
-When a production system fails, identifying the cause is rarely as simple as looking at a single error message. Engineers may need to investigate unusual signals, recent deployments, service dependencies, and historical incidents before they can understand what went wrong.
+Production incidents rarely have a single obvious cause. Engineers often need to correlate multiple signals such as service health, traffic, dependencies, recent deployments, and historical incidents before deciding where to investigate.
+
+SRE Incident Intelligence provides an explainable investigation layer for this process.
+
+It takes structured incident signals and produces:
+
+- Incident risk and customer-impact assessment
+- Blast-radius analysis
+- Ranked root-cause hypotheses
+- Recent deployment and change correlation
+- Historical incident similarity
+- Recurrence-risk estimation
+- Evidence-gap detection
+- Investigation recommendations
+
+The system is designed to **assist engineers rather than automatically remediate production systems**. Its goal is to make incident investigation more structured, auditable, and evidence-driven.
 
 **SRE Incident Intelligence explores how software can make that investigation more organized.**
 
@@ -280,7 +295,7 @@ This makes it possible to interact with the analysis engine through an HTTP requ
 
 ## Testing and Quality Checks
 
-Testing is an important part of the project because incident analysis should produce predictable behavior for known inputs.
+Testing is a core part of the project because incident analysis should produce predictable, reproducible results for known inputs.
 
 Run the complete test suite:
 
@@ -288,16 +303,76 @@ Run the complete test suite:
 python -m pytest -v
 ```
 
-The test suite includes coverage for areas such as:
+The test suite covers:
 
-- Core analysis behavior
-- API functionality
-- Application components
-- Repository operations
-- Telemetry-related functionality
-- Additional analysis scenarios
+- Core incident analysis behavior
+- API functionality and validation
+- Analysis components
+- Repository and persistence operations
+- Telemetry processing
+- Advanced incident-analysis scenarios
 
----
+Latest test run:
+
+```text
+22 passed in 2.34s
+```
+
+The test suite helps verify that changes to the analysis engine, API, persistence layer, and supporting components do not break existing behavior.
+
+
+## Usage
+
+### Command-Line Interface
+
+Analyze an incident directly from a JSON file:
+
+```bash
+python -m incident_intelligence examples/payment_incident.json
+```
+
+The CLI produces a structured investigation summary including:
+
+- Incident priority and risk score
+- Customer impact and blast radius
+- Leading investigation hypothesis
+- Recent change correlation
+- Recurrence risk
+- Investigation quality
+- Evidence gaps
+- Recommended investigation actions
+
+For machine-readable output:
+
+```bash
+python -m incident_intelligence examples/payment_incident.json --json
+```
+
+### REST API
+
+Start the HTTP API:
+
+```bash
+python -m incident_intelligence.api
+```
+
+The service starts locally at:
+
+```text
+http://127.0.0.1:8080
+```
+
+Available endpoints:
+
+```text
+GET  /health
+POST /analyze
+```
+
+The `/analyze` endpoint accepts structured incident data and returns the same analysis through an HTTP interface.
+
+The API validates incoming requests and enforces a maximum request body size of 1,000,000 bytes.
+
 
 ## Project Structure
 
